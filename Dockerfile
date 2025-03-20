@@ -17,4 +17,4 @@ COPY src/main/resources/application.yml /home/youth996/ipv42v6/application.yml
 
 
 EXPOSE 10401
-ENTRYPOINT ["java","-jar","ipv42v6","--spring.config.location=application.yml"]
+ENTRYPOINT ["java","-jar","ipv42v6.jar","--spring.config.location=application.yml"]

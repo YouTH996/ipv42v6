@@ -64,4 +64,4 @@ docker run --name ipv42v6 -d -p 8899:8899 youth996/ipv42v6
 
 本项目遵循 MIT License，欢迎贡献代码或提出 Issue！
 
-GitHub 仓库： youth996/ipv42v6
+GitHub 仓库： [youth996/ipv42v6](https://github.com/youth996/ipv42v6 )  
