@@ -1,0 +1,11 @@
+version: "3"
+services:
+  ipv42v6:
+    container_name: ipv42v6
+    image: youth996/ipv42v6:1.0.0
+    ports:
+      - "8899:8899"
+#是否制定配置文件方式启动
+#    volumes:
+#      - /home/youth996/ipv42v6/application.yml:/home/youth996/ipv42v6/application.yml
+    restart: always
