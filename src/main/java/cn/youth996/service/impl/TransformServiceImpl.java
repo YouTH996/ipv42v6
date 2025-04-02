@@ -86,6 +86,9 @@ public class TransformServiceImpl implements TransformService {
             // 2. 通过 ping 触发 IPv6 记录
             Runtime.getRuntime().exec("ping6 -c 1 ff02::1%"+networkInterface); // eth0 替换为你的网卡
             Thread.sleep(1000); // 等待邻居表更新
+            //先进行ping通测试
+            Runtime.getRuntime().exec("ping "+ipv4Address);
+            Thread.sleep(1000); // 等待ping更新
             // 获取设备的 MAC 地址
             Process ipv4Process = Runtime.getRuntime().exec("ip -4 neigh");
             BufferedReader ipv4Reader = new BufferedReader(new InputStreamReader(ipv4Process.getInputStream(), StandardCharsets.UTF_8));
