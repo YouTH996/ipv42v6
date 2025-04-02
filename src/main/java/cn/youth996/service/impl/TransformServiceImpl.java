@@ -81,6 +81,11 @@ public class TransformServiceImpl implements TransformService {
      */
     private String ipv42v6ByLinux(String ipv4Address) {
         try {
+            // 1.获取网卡名称
+            String networkInterface = getNetworkInterfaceByIp(ipv4Address);
+            // 2. 通过 ping 触发 IPv6 记录
+            Runtime.getRuntime().exec("ping6 -c 1 ff02::1%"+networkInterface); // eth0 替换为你的网卡
+            Thread.sleep(1000); // 等待邻居表更新
             // 获取设备的 MAC 地址
             Process ipv4Process = Runtime.getRuntime().exec("ip -4 neigh");
             BufferedReader ipv4Reader = new BufferedReader(new InputStreamReader(ipv4Process.getInputStream(), StandardCharsets.UTF_8));
@@ -126,6 +131,32 @@ public class TransformServiceImpl implements TransformService {
                         }
                         break;
                     }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 获取网卡名称
+     * @param ipv4Address IPv4 地址
+     * @return 网卡名称
+     */
+    private String getNetworkInterfaceByIp(String ipv4Address) {
+        try {
+            // 运行 `ip route get <IPv4地址>` 命令
+            Process process = Runtime.getRuntime().exec("ip route get " + ipv4Address);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = Pattern.compile("dev (\\S+)").matcher(line);
+                if (matcher.find()) {
+                    String interfaceName = matcher.group(1);
+                    log.info("找到网卡: " + interfaceName);
+                    return interfaceName;
                 }
             }
         } catch (Exception e) {
