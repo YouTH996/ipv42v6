@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4 转 IPv6 转换器 - 欢迎页</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #0044cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+        }
+        section {
+            padding: 20px;
+            margin: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin: 8px 0;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #222;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>欢迎使用 IPv4 转 IPv6 转换器</h1>
+    <p>轻松将您的 IPv4 地址转换为 IPv6 地址。</p>
+</header>
+
+<section>
+    <h2>🚀 功能特点</h2>
+    <ul>
+        <li>根据局域网内的 IPv4 地址查询对应的 IPv6 地址。</li>
+        <li>提供简单的 HTTP 接口，支持 RESTful 访问。</li>
+        <li>适用于 Windows 和 Linux 平台。</li>
+        <li>支持 Docker 一键部署。</li>
+    </ul>
+</section>
+
+<section>
+    <h2>📌 运行方式</h2>
+    <h3>1️⃣ 本地运行（无需 Docker）</h3>
+    <p><strong>环境要求：</strong> JDK 11+，Maven 3.6+ </p>
+    <h4>启动项目</h4>
+    <pre>mvn spring-boot:run</pre>
+    <h4>访问接口</h4>
+    <p>项目启动后，您可以在以下 URL 查询：</p>
+    <a href="http://localhost:8899/ipv42v6?ipv4=192.168.1.30" target="_blank">http://localhost:8899/ipv42v6?ipv4=192.168.1.30</a>
+    <p>返回示例：</p>
+    <pre>2408:820c:8f59:fb0::14f</pre>
+
+    <h3>2️⃣ 使用 Docker 部署</h3>
+    <h4>安装 Docker</h4>
+    <p>如果您尚未安装 Docker，请参考 <a href="https://docs.docker.com/get-docker/" target="_blank">Docker 官方文档</a> 进行安装。</p>
+    <h4>构建并运行容器</h4>
+    <pre>docker run --name ipv42v6 -d -p 8899:8899 youth996/ipv42v6</pre>
+    <h4>访问服务</h4>
+    <p>您可以通过以下地址访问服务：</p>
+    <a href="http://localhost:8899/ipv42v6?ipv4=192.168.1.30" target="_blank">http://localhost:8899/ipv42v6?ipv4=192.168.1.30</a>
+</section>
+
+<section>
+    <h2>🔧 配置说明</h2>
+    <p>默认端口为 8899。如果需要修改端口，请编辑 <code>application.yml</code> 文件或使用环境变量进行配置。</p>
+    <p>您也可以在运行时指定端口：</p>
+    <pre>--server.port=<新端口号></pre>
+</section>
+
+<section>
+    <h2>📜 开源协议</h2>
+    <p>本项目遵循 MIT 许可证，欢迎贡献代码或提出问题。</p>
+    <p>GitHub 仓库地址：<a href="https://github.com/youth996/ipv42v6" target="_blank">youth996/ipv42v6</a></p>
+</section>
+
+<footer>
+    <p>&copy; 2025 IPv42v6 Project. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

@@ -27,6 +27,9 @@ public class TransformServiceImpl implements TransformService {
      */
     private String ipv42v6ByWin(String ipv4Address) {
         try {
+            //先进行ping通测试
+            Runtime.getRuntime().exec("ping " + ipv4Address);
+            Thread.sleep(1000); // 等待ping更新
             //先获取设备的MAC地址
             Process ipv4Process = Runtime.getRuntime().exec("netsh interface ipv4 show neighbors");
             BufferedReader ipv4reader = new BufferedReader(new InputStreamReader(ipv4Process.getInputStream(), StandardCharsets.UTF_8));
@@ -66,6 +69,63 @@ public class TransformServiceImpl implements TransformService {
                     }
                 }
             }
+            //使用主机名获取
+            String hostName = getHostName(ipv4Address);
+            if (hostName != null) {
+                log.info("提取到的主机名: " + hostName);
+                String ipv6Address = getIpv6ByHostName(hostName);
+                if (StringUtils.isNotBlank(ipv6Address)) {
+                    log.info("提取的 IPv6 地址: " + ipv6Address);
+                    return ipv6Address;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 获取主机名
+    private static String getHostName(String ipv4Address) {
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            String command;
+
+            if (os.contains("win")) {
+                // Windows 环境
+                command = "nbtstat -a " + ipv4Address;
+                Process process = Runtime.getRuntime().exec(command);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("<00>")) {
+                        String[] parts = line.split("<00>");
+                        return parts[0].trim(); // 返回主机名
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 通过主机名获取 IPv6 地址
+    private static String getIpv6ByHostName(String hostName) {
+        try {
+            // Windows 环境
+            String command = "ping -6 " + hostName;
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("[")) {
+
+                    String ipv6Address = line.substring(line.indexOf("[")+1, line.indexOf("]"));
+                    log.info("提取的 IPv6 地址: " + ipv6Address);
+                    return ipv6Address;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,12 +143,12 @@ public class TransformServiceImpl implements TransformService {
         try {
             // 1.获取网卡名称
             String networkInterface = getNetworkInterfaceByIp(ipv4Address);
-            // 2. 通过 ping 触发 IPv6 记录
-            Runtime.getRuntime().exec("ping6 -c 1 ff02::1%"+networkInterface); // eth0 替换为你的网卡
-            Thread.sleep(1000); // 等待邻居表更新
             //先进行ping通测试
-            Runtime.getRuntime().exec("ping "+ipv4Address);
+            Runtime.getRuntime().exec("ping " + ipv4Address);
             Thread.sleep(1000); // 等待ping更新
+            // 2. 通过 ping 触发 IPv6 记录
+            Runtime.getRuntime().exec("ping6 -c 1 ff02::1%" + networkInterface); // eth0 替换为你的网卡
+            Thread.sleep(1000); // 等待邻居表更新
             // 获取设备的 MAC 地址
             Process ipv4Process = Runtime.getRuntime().exec("ip -4 neigh");
             BufferedReader ipv4Reader = new BufferedReader(new InputStreamReader(ipv4Process.getInputStream(), StandardCharsets.UTF_8));
@@ -144,6 +204,7 @@ public class TransformServiceImpl implements TransformService {
 
     /**
      * 获取网卡名称
+     *
      * @param ipv4Address IPv4 地址
      * @return 网卡名称
      */
